@@ -1,13 +1,27 @@
 const fs = require('fs');
-const filePath = './hello.hs';
+const { exec } = require('child_process');
+const filePath = './hello';
 
-var file = fs.readFileSync(filePath);
+let file = fs.readFileSync(filePath + '.hs');
 
-console.log('Initial File content : ' + file);
+const doHaskell = function() {
+  exec('ghc ' + filePath + '.hs; ./' + filePath, (error, stdout, stderr) => {
+    console.log(stdout);
+    console.log(stderr);
+    if (error !== null) {
+        console.log(`exec error: ${error}`);
+    }
+  });
+}
 
+console.log('Initial file content : ' + file);
+console.log('Initial output : ');
+doHaskell();
 
-fs.watchFile(filePath, { persistent: true, interval: 100 }, function() {
-    console.log('File Changed ...');
-    file = fs.readFileSync(filePath);
-    console.log('File content at : ' + new Date() + ' is \n' + file);
+fs.watchFile(filePath + '.hs', { persistent: true, interval: 100 }, function() {
+  console.log('File Changed ...');
+  file = fs.readFileSync(filePath + '.hs');
+  console.log('New file content : ' + file);
+  console.log('New output : ');
+  doHaskell();
 });
