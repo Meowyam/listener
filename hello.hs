@@ -1,3 +1,9 @@
-module Main where
+import System.IO
+import System.Environment
 
-main = putStrLn "hello world"
+main = do
+  hello <- getArgs
+  if null hello
+    then return ()
+  else do
+    putStrLn $ reverse $ concat hello
